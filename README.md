@@ -10,6 +10,19 @@ A modular Python-based search agent that leverages Large Language Models (LLMs) 
 - **Environment-based Configuration**: Secure management of API keys and settings
 - **Modern Python**: Uses OpenAI SDK v1.0.0+ and best practices
 
+## 🔮 Planned Features
+
+### Search Engine Abstraction Factory
+- **Abstract Factory Pattern**: Implement a factory pattern to encapsulate search engine creation
+- **Unified Interface**: Standardized creation and configuration of search engines
+- **Dynamic Engine Selection**: Runtime selection and instantiation of search engines
+
+### Advanced Search Customization
+- **Multi-Engine Search**: Support simultaneous searches across multiple search engines
+- **Customizable Results**: Configurable minimum result count per search engine
+- **Result Aggregation**: Intelligent merging and deduplication of results from multiple sources
+- **Performance Optimization**: Parallel search execution with configurable timeouts
+
 ## 📋 Prerequisites
 
 - Python 3.8+
