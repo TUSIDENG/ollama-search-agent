@@ -76,6 +76,20 @@ The architecture follows modern software engineering principles with clear separ
 - **Method**: Abstract `search(query)` method
 - **Purpose**: Ensures consistent interface across all search implementations
 
+#### `factory.py` - Search Engine Factory (New)
+- **Pattern**: Factory pattern with dynamic discovery and registration
+- **Features**:
+  - **Dynamic Discovery**: Automatically discovers all classes inheriting from `BaseSearch`
+  - **Dynamic Registration**: Register new engines via `register_engine()` method
+  - **Configuration Validation**: Checks required API keys and configuration
+  - **Smart Default Selection**: Automatically selects best available engine
+  - **Error Handling**: Comprehensive error handling with clear messages
+- **Key Methods**:
+  - `create(engine_name)`: Create search engine instance
+  - `get_default_engine()`: Get best available search engine
+  - `list_available_engines()`: List all discovered engines
+  - `is_engine_available(engine_name)`: Check if engine is configured and ready
+
 #### Implemented Search Engines
 - **`placeholder_search.py`**: Mock implementation for development/testing
 - **`google_search.py`**: Google Custom Search API integration
@@ -158,7 +172,57 @@ return response.choices[0].message.content.strip()
 - Update response access from `.choices[0].text` to `.choices[0].message.content`
 - Support for chat-based models and message history
 
-## 6. Extension Guide
+## 6. Search Engine Factory Implementation
+
+### Factory Pattern Design
+
+The Search Engine Factory implements a dynamic discovery and registration system that eliminates hard-coded engine lists and enables seamless extension.
+
+#### Core Design Principles
+- **Open/Closed Principle**: New engines can be added without modifying existing code
+- **Dynamic Discovery**: Automatically discovers all classes inheriting from `BaseSearch`
+- **Configuration-Driven**: Engine availability determined by configuration status
+- **Graceful Degradation**: Falls back to placeholder when no engines are available
+
+#### Factory Usage Examples
+
+**Basic Usage**:
+```python
+from search_engines import create_search_engine, get_default_search_engine
+
+# Create specific engine
+engine = create_search_engine("google")
+
+# Get best available engine automatically
+engine = get_default_search_engine()
+
+# List all available engines
+engines = list_available_engines()
+```
+
+**Dynamic Registration**:
+```python
+from search_engines import register_search_engine
+
+# Register external search engine
+register_search_engine(
+    "my_engine", 
+    "external_module.my_search", 
+    "MySearchEngine"
+)
+```
+
+#### Factory Methods
+
+| Method | Description | Parameters | Returns |
+|--------|-------------|------------|---------|
+| `create(engine_name)` | Create engine instance | `engine_name: str` | `BaseSearch` instance |
+| `get_default_engine()` | Get best available engine | None | `BaseSearch` instance |
+| `list_available_engines()` | List discovered engines | None | `List[str]` |
+| `is_engine_available(name)` | Check engine readiness | `name: str` | `bool` |
+| `register_engine(name, module, class)` | Register new engine | `name, module, class: str` | None |
+
+## 7. Extension Guide
 
 ### Adding New LLM Providers
 
@@ -197,8 +261,11 @@ return response.choices[0].message.content.strip()
    - Update `.env.example` with API keys
 
 3. **Integration**:
-   - Update search engine selection in `main.py`
-   - Ensure results follow standard format
+   - **Automatic**: Factory will automatically discover the new engine
+   - **Manual Registration**: Use `register_search_engine()` for external engines
+   - **CLI**: New engine automatically available via `--search-engine` argument
+
+**No Code Changes Required**: The factory pattern eliminates the need to update selection logic when adding new engines.
 
 ## 7. Development & Testing
 

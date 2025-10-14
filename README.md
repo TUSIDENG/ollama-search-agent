@@ -10,14 +10,38 @@ A modular Python-based search agent that leverages Large Language Models (LLMs) 
 - **Environment-based Configuration**: Secure management of API keys and settings
 - **Modern Python**: Uses OpenAI SDK v1.0.0+ and best practices
 
-## 🔮 Planned Features
+## 🏭 Search Engine Abstraction Factory (Implemented)
 
-### Search Engine Abstraction Factory
-- **Abstract Factory Pattern**: Implement a factory pattern to encapsulate search engine creation
-- **Unified Interface**: Standardized creation and configuration of search engines
-- **Dynamic Engine Selection**: Runtime selection and instantiation of search engines
+### Factory Pattern Features
+- **Dynamic Engine Discovery**: Automatically discovers all search engines inheriting from `BaseSearch`
+- **Dynamic Registration**: Register new engines without modifying existing code
+- **Configuration Validation**: Automatically checks engine configuration status
+- **Smart Default Selection**: Automatically selects the best available search engine
+- **Error Handling**: Comprehensive error handling with clear messages
 
-### Advanced Search Customization
+### Available Search Engines
+- **placeholder**: Mock search engine for development and testing
+- **google**: Google Custom Search API integration
+- **bing**: Bing Search API integration
+- **brave**: Brave Search API integration
+- **custom_google**: Alternative Google search implementation
+
+### Usage Examples
+```bash
+# List all available engines and their status
+python main.py --list-engines
+
+# Use auto-selected search engine (recommended)
+python main.py --search-engine auto "your query"
+
+# Use specific search engine
+python main.py --search-engine google "AI advancements"
+
+# Use placeholder for testing
+python main.py --search-engine placeholder "test query"
+```
+
+### Advanced Search Customization (Planned)
 - **Multi-Engine Search**: Support simultaneous searches across multiple search engines
 - **Customizable Results**: Configurable minimum result count per search engine
 - **Result Aggregation**: Intelligent merging and deduplication of results from multiple sources
