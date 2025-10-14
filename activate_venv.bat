@@ -1,0 +1,3 @@
+@echo off
+echo Opening PowerShell window and activating virtual environment...
+powershell -NoExit -Command ". .\.venv\Scripts\activate.ps1; $env:PYTHONPATH = 'D:\code\ollama-search-agent'; Write-Host 'PYTHONPATH set to: ' $env:PYTHONPATH -ForegroundColor Cyan"
