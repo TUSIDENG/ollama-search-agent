@@ -1,0 +1,10 @@
+[project]
+name = "ollama-search-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "langchain-google-community>=2.0.10",
+    "openai>=2.3.0",
+]
