@@ -1,9 +1,10 @@
 # Ollama Search Agent
 
-A modular Python-based search agent that leverages Large Language Models (LLMs) to provide intelligent search capabilities. The agent can use both local Ollama models and OpenAI-compatible APIs to understand queries, formulate search plans, and synthesize information from search results.
+A modular Python-based search agent that leverages Large Language Models (LLMs) to provide intelligent search capabilities. The agent uses LangChain for advanced tool usage and agent orchestration, supporting both local Ollama models and OpenAI-compatible APIs.
 
 ## 🚀 Features
 
+- **LangChain Integration**: Advanced agent orchestration with ReAct prompting and tool usage
 - **Multi-LLM Support**: Seamlessly switch between Ollama (local) and OpenAI-compatible APIs
 - **Modular Architecture**: Clean separation between LLM clients, search engines, and core logic
 - **Extensible Design**: Easy to add new LLM providers and search engines

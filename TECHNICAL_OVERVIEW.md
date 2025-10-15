@@ -2,8 +2,10 @@
 
 ## 1. Project Goal & Vision
 
-The primary goal of this project is to create a modular and extensible search agent in Python that leverages Large Language Models (LLMs) to provide intelligent search capabilities. The agent is designed to:
+The primary goal of this project is to create a modular and extensible search agent in Python that leverages Large Language Models (LLMs) to provide intelligent search capabilities. The agent now uses LangChain for advanced agent orchestration and tool usage, providing:
 
+- **Advanced Agent Capabilities**: ReAct prompting with tool usage for intelligent search decisions
+- **LangChain Integration**: Professional agent framework with proper LLM compatibility
 - **Understand complex user queries** through LLM-powered analysis
 - **Formulate effective search strategies** by generating relevant keywords and sub-queries
 - **Synthesize information** from multiple search results into coherent, comprehensive answers
@@ -14,6 +16,7 @@ The primary goal of this project is to create a modular and extensible search ag
 
 The architecture follows modern software engineering principles with clear separation of concerns:
 
+- **LangChain Integration**: Professional agent framework with ReAct prompting and tool usage
 - **Modularity**: Each component has a single responsibility and well-defined interface
 - **Extensibility**: Easy to add new LLM providers and search engines
 - **Configuration Management**: Centralized configuration with environment-based secrets
@@ -24,7 +27,8 @@ The architecture follows modern software engineering principles with clear separ
 
 - **Entry Point (`main.py`)**: CLI interface with argument parsing and component orchestration
 - **Configuration (`config.py`)**: Centralized settings management with environment variables
-- **Agent Core (`agent.py`)**: Search workflow orchestration (Plan → Search → Synthesize)
+- **Agent Core (`agent.py`)**: LangChain-based agent with tool usage capabilities
+- **LangChain Tools (`langchain_tools/`)**: Search tool implementations for LangChain
 - **LLM Clients (`llm_clients/`)**: Provider-specific implementations with consistent interface
 - **Search Engines (`search_engines/`)**: Search API integrations with abstract base class
 
