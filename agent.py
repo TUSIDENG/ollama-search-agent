@@ -1,57 +1,155 @@
-# agent.py
-from llm_clients import OllamaClient, OpenAIClient
-from search_engines import PlaceholderSearch
+# agent.py - LangChain Optimized Version
+from typing import List, Dict, Any
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain_core.prompts import PromptTemplate
+from langchain_core.tools import BaseTool
+from langchain.schema import SystemMessage
+from langchain_tools import SearchTool
+from config import OLLAMA_CONFIG, OPENAI_API_CONFIG
 
-class SearchAgent:
-    def __init__(self, llm_client, search_engine):
+
+class LangChainSearchAgent:
+    """LangChain-based search agent with tool usage capabilities."""
+    
+    def __init__(self, llm_client, tools: List[BaseTool] = None):
         self.llm_client = llm_client
-        self.search_engine = search_engine
+        self.tools = tools or []
+        self.agent_executor = None
+        self._setup_agent()
+    
+    def _setup_agent(self):
+        """Setup the LangChain agent with tools and prompt."""
+        try:
+            from langchain.agents import create_react_agent, AgentExecutor
+            from langchain_core.prompts import PromptTemplate
+            
+            # Create the ReAct prompt template with required variables
+            react_prompt = PromptTemplate.from_template("""You are a helpful AI assistant that can search the web for information.
+Your goal is to help users find accurate and relevant information by using the search tools available to you.
 
-    def run(self, query: str):
-        print(f"--- Running agent for query: '{query}' ---")
-        
-        # 1. Deconstruct query and form a search plan
-        plan_prompt = f"Based on the user query '{query}', create a search plan with a few search keywords."
-        plan = self.llm_client.generate(plan_prompt)
-        print(f"Search Plan: {plan}")
+When you need to find current information, facts, or verify something, use the web_search tool.
+Always provide comprehensive and well-structured answers based on the search results.
 
-        # 2. Execute search
-        print(f"\n--- Executing Search ---")
-        search_results = self.search_engine.search(plan)
+Guidelines:
+1. Use the search tool when you need up-to-date information or facts
+2. Be thorough in your analysis of search results
+3. Cite sources when possible
+4. If search results are insufficient, acknowledge limitations
+5. Provide clear, well-structured answers
+
+TOOLS:
+------
+
+You have access to the following tools:
+
+{tools}
+
+To use a tool, please use the following format:
+
+```
+Thought: Do I need to use a tool? Yes
+Action: the action to take, should be one of [{tool_names}]
+Action Input: the input to the action
+Observation: the result of the action
+```
+
+When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
+
+```
+Thought: Do I need to use a tool? No
+Final Answer: [your response here]
+```
+
+Begin!
+
+Question: {input}
+
+{agent_scratchpad}""")
+            
+            # Create ReAct agent
+            agent = create_react_agent(
+                llm=self.llm_client,
+                tools=self.tools,
+                prompt=react_prompt
+            )
+            
+            # Create agent executor
+            self.agent_executor = AgentExecutor(
+                agent=agent,
+                tools=self.tools,
+                verbose=True,
+                handle_parsing_errors=True
+            )
+        except Exception as e:
+            print(f"Warning: Failed to initialize LangChain agent: {e}")
+            print("Falling back to simple tool execution...")
+            self.agent_executor = None
+    
+    def run(self, query: str) -> str:
+        """Run the agent with the given query."""
+        print(f"--- Running LangChain agent for query: '{query}' ---")
         
-        # Print detailed search results
-        print(f"Found {len(search_results)} search results:")
-        for i, result in enumerate(search_results, 1):
-            print(f"\nResult {i}:")
-            if 'title' in result:
-                print(f"  Title: {result['title']}")
-            if 'link' in result:
-                print(f"  Link: {result['link']}")
-            if 'snippet' in result:
-                # Truncate long snippets for readability
-                snippet = result['snippet']
-                if len(snippet) > 200:
-                    snippet = snippet[:200] + "..."
-                print(f"  Snippet: {snippet}")
-        
-        # 3. Synthesize results and generate a final answer
-        print(f"\n--- Synthesizing Results ---")
-        synthesis_prompt = f"Query: {query}\n\nSearch Results:\n{search_results}\n\nSynthesize the information and provide a comprehensive answer."
-        final_answer = self.llm_client.generate(synthesis_prompt)
-        
-        return final_answer
+        try:
+            # Execute the agent
+            result = self.agent_executor.invoke({"input": query})
+            return result.get("output", "No response generated")
+            
+        except Exception as e:
+            error_msg = f"Agent execution failed: {str(e)}"
+            print(f"Error: {error_msg}")
+            return error_msg
+
+
+def create_search_agent(llm_type: str = "ollama", search_engine: str = "auto"):
+    """Factory function to create a LangChain search agent."""
+    
+    # Create proper LangChain LLM
+    if llm_type == "openai":
+        from langchain_openai import ChatOpenAI
+        llm = ChatOpenAI(
+            api_key=OPENAI_API_CONFIG["api_key"],
+            base_url=OPENAI_API_CONFIG["base_url"],
+            model=OPENAI_API_CONFIG["model"]
+        )
+    else:
+        from langchain_community.llms import Ollama
+        llm = Ollama(
+            base_url=OLLAMA_CONFIG["host"],
+            model=OLLAMA_CONFIG["model"]
+        )
+    
+    # Create search tool with specified engine
+    from langchain_tools import create_search_tool
+    search_tool = create_search_tool(engine=search_engine)
+    
+    # Create agent with tools
+    agent = LangChainSearchAgent(
+        llm_client=llm,
+        tools=[search_tool]
+    )
+    
+    return agent
+
 
 def main():
-    # Example usage with Ollama and PlaceholderSearch
-    ollama_client = OllamaClient()
-    search_engine = PlaceholderSearch()
-    agent = SearchAgent(llm_client=ollama_client, search_engine=search_engine)
+    """Example usage of the LangChain optimized agent."""
+    # Create agent with default settings
+    agent = create_search_agent(llm_type="ollama", search_engine="auto")
     
-    query = "What are the latest advancements in AI?"
-    result = agent.run(query)
+    # Test queries
+    test_queries = [
+        "What are the latest advancements in AI?",
+        "Find information about climate change effects",
+        "What's the current weather in San Francisco?"
+    ]
     
-    print("\n--- Final Answer ---")
-    print(result)
+    for query in test_queries:
+        print(f"\n{'='*60}")
+        result = agent.run(query)
+        print(f"\nFinal Answer:")
+        print(result)
+        print(f"{'='*60}\n")
+
 
 if __name__ == "__main__":
     main()

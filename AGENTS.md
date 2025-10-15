@@ -8,32 +8,57 @@ The Ollama Search Agent system implements a modular agent architecture where dif
 
 ## Core Agent Types
 
-### 1. SearchAgent (Primary Orchestrator)
+### 1. LangChainSearchAgent (Primary Orchestrator)
 
 **Location**: `agent.py`
 
-**Purpose**: The main orchestrator agent that coordinates the entire search workflow from query analysis to final answer synthesis.
+**Purpose**: The main orchestrator agent that uses LangChain framework to coordinate the search workflow with tool usage capabilities.
 
 **Key Responsibilities**:
-- Query analysis and search plan generation
-- Search execution coordination
+- Tool-based search execution using LangChain agents
+- Automatic tool selection and reasoning
 - Information synthesis from search results
 - Response generation and delivery
 
 **Workflow**:
-1. **Planning Phase**: Uses LLM to analyze user query and generate search strategy
-2. **Search Phase**: Delegates to search engine with generated plan
-3. **Synthesis Phase**: Combines query and results for final LLM processing
+1. **Agent Reasoning**: LangChain agent analyzes query and decides when to use search tools
+2. **Tool Execution**: Search tools are automatically invoked when needed
+3. **Information Synthesis**: Agent synthesizes information from tool results
+4. **Response Generation**: Final answer generated based on all available information
 
 **Interface**:
 ```python
-class SearchAgent:
-    def __init__(self, llm_client, search_engine):
+class LangChainSearchAgent:
+    def __init__(self, llm_client, tools: List[BaseTool] = None):
         self.llm_client = llm_client
-        self.search_engine = search_engine
+        self.tools = tools or []
+        self.agent_executor = None
 
     def run(self, query: str) -> str:
-        # Orchestrates the complete search workflow
+        # Executes LangChain agent with tool usage
+```
+
+### 2. SearchTool (LangChain Tool)
+
+**Location**: `langchain_tools/search_tools.py`
+
+**Purpose**: LangChain tool wrapper for search engines, enabling tool-based search capabilities.
+
+**Key Features**:
+- LangChain BaseTool implementation
+- Automatic search engine selection
+- Structured input/output handling
+- Integration with LangChain agent framework
+
+**Interface**:
+```python
+class SearchTool(BaseTool):
+    name: str = "web_search"
+    description: str = "Search the web for information using various search engines..."
+    args_schema: Type[BaseModel] = SearchInput
+
+    def _run(self, query: str, engine: str = "auto") -> str:
+        # Executes search and returns formatted results
 ```
 
 ### 2. LLM Agents (Language Model Clients)
@@ -202,33 +227,62 @@ engines = list_available_engines()
 - Secure management of sensitive data
 - Environment-based configuration loading
 
-## Agent Workflow
+## LangChain Integration
 
-### Complete Execution Flow
+### LangChain Architecture
+
+The system now leverages LangChain framework for enhanced agent capabilities:
+
+- **Tool-based Execution**: Search engines are wrapped as LangChain tools
+- **ReAct Agent Pattern**: Uses reasoning and action framework for intelligent tool usage
+- **Automatic Tool Selection**: Agent decides when and how to use search tools
+- **Enhanced Reasoning**: Agent can reason about when search is needed and how to interpret results
+
+### LangChain Components
+
+#### LangChainLLMClient
+- Wraps existing LLM clients for LangChain compatibility
+- Provides consistent interface for LangChain agents
+- Maintains backward compatibility with existing LLM infrastructure
+
+#### SearchTool
+- LangChain BaseTool implementation for search engines
+- Structured input/output handling with Pydantic schemas
+- Automatic search engine selection and configuration
+
+### Agent Workflow
+
+#### LangChain Execution Flow
 
 1. **User Input**: CLI command with query and optional parameters
 2. **Agent Initialization**:
-   - LLM client selected based on `--llm` argument
-   - Search engine selected via factory pattern
-   - SearchAgent instantiated with configured components
-3. **Planning Phase**:
-   - Query sent to LLM with planning prompt
-   - LLM generates search keywords and sub-questions
-   - Search plan returned to agent
-4. **Search Phase**:
-   - Plan sent to search engine agent
-   - Search engine executes API calls
-   - Structured results returned
-5. **Synthesis Phase**:
-   - Original query + search results combined in synthesis prompt
-   - LLM generates final comprehensive answer
-   - Answer returned through agent chain
+   - LLM client selected and wrapped for LangChain compatibility
+   - Search tools created and configured
+   - LangChainSearchAgent instantiated with tools
+3. **Agent Reasoning**:
+   - LangChain agent analyzes query and determines if search is needed
+   - Agent decides which search tool to use and with what parameters
+4. **Tool Execution**:
+   - Search tool executes web search using configured search engine
+   - Results are formatted and returned to agent
+5. **Information Synthesis**:
+   - Agent processes search results and generates final answer
+   - Agent can perform multiple search iterations if needed
+6. **Response Generation**: Final comprehensive answer returned to user
 
-### Data Flow
+#### Data Flow
 
 ```
-User Query → SearchAgent → LLM Agent (Planning) → Search Engine Agent → LLM Agent (Synthesis) → Final Answer
+User Query → LangChainSearchAgent → Reasoning → SearchTool → Search Engine → Synthesis → Final Answer
 ```
+
+### Benefits of LangChain Integration
+
+- **Intelligent Tool Usage**: Agent decides when to search based on query context
+- **Multi-step Reasoning**: Agent can perform multiple searches and synthesize information
+- **Enhanced Flexibility**: Easy to add new tools and capabilities
+- **Better Error Handling**: LangChain provides robust error handling and recovery
+- **Standardized Interface**: Consistent tool interface across different search engines
 
 ## Agent Extensibility
 
