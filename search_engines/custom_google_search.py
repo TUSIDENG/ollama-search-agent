@@ -202,8 +202,8 @@ class CustomGoogleSearch(BaseSearch):
     """
     
     def __init__(self, use_proxy: bool = True, timeout: int = 30, max_retries: int = 3):
-        self.api_key = SEARCH_ENGINES.get("google", {}).get("api_key")
-        self.cse_id = SEARCH_ENGINES.get("google", {}).get("cse_id")
+        self.api_key = SEARCH_ENGINES.get("custom_google", {}).get("api_key")
+        self.cse_id = SEARCH_ENGINES.get("custom_google", {}).get("cse_id")
         if not self.api_key or not self.cse_id:
             raise ValueError("Google API key or CSE ID not found in config.")
         

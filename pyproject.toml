@@ -5,6 +5,7 @@ description = "A modular Python-based search agent that leverages Large Language
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
+    "langchain-google-community>=2.0.10",
     "langchain-openai>=0.3.35",
     "openai>=2.3.0",
 ]

@@ -150,14 +150,17 @@ class SearchEngineFactory:
         engine_name = engine_name.lower()
         
         if engine_name not in cls._engines:
+            print(f"DEBUG: Engine '{engine_name}' not in _engines.")
             return {}
         
         config = SEARCH_ENGINES.get(engine_name, {})
         status = {}
         
+        print(f"DEBUG: Checking config status for '{engine_name}'. Config: {config}")
         # Check each required configuration key
         for key, value in config.items():
             status[key] = value is not None and value != ""
+            print(f"DEBUG:   Key '{key}': Value present = {status[key]}")
         
         return status
     
@@ -176,15 +179,19 @@ class SearchEngineFactory:
         engine_name = engine_name.lower()
         
         if engine_name not in cls._engines:
+            print(f"DEBUG: is_engine_available: Engine '{engine_name}' not registered.")
             return False
         
         # Placeholder is always available
         if engine_name == "placeholder":
+            print(f"DEBUG: is_engine_available: '{engine_name}' is placeholder, always available.")
             return True
         
         # Check if required configuration is present
         config_status = cls.get_engine_config_status(engine_name)
-        return all(config_status.values())
+        is_available = all(config_status.values())
+        print(f"DEBUG: is_engine_available: '{engine_name}' config status: {config_status}, all values present: {is_available}")
+        return is_available
     
     @classmethod
     def get_default_engine(cls) -> BaseSearch:
@@ -204,6 +211,10 @@ class SearchEngineFactory:
             engine_name for engine_name in cls.get_available_engines()
             if cls.is_engine_available(engine_name) and engine_name != "placeholder"
         ]
+        
+        # Prioritize Custom Google, then Google
+        if "customgoogle" in available_engines:
+            return cls.create("customgoogle")
         
         if available_engines:
             # Return the first available engine

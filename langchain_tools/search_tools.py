@@ -35,14 +35,11 @@ class SearchTool(BaseTool):
     def _run(self, query: str, engine: str = "auto") -> str:
         """Execute a web search and return formatted results."""
         try:
-            # If engine is "auto", use the default_engine from instance
-            if engine == "auto":
-                engine = self.default_engine
-            
             # Select search engine
             if engine == "auto":
                 search_engine = get_default_search_engine()
-                engine_name = "auto-selected"
+                engine_name = search_engine.__class__.__name__.lower().replace('search', '')
+                print(f"--- Auto-selecting search engine: {engine_name} ---")
             else:
                 search_engine = create_search_engine(engine)
                 engine_name = engine

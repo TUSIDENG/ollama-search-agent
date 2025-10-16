@@ -23,6 +23,10 @@ SEARCH_ENGINES = {
         "api_key": os.getenv("GOOGLE_API_KEY"),
         "cse_id": os.getenv("GOOGLE_CSE_ID")
     },
+    "custom_google": {
+        "api_key": os.getenv("GOOGLE_API_KEY"),
+        "cse_id": os.getenv("GOOGLE_CSE_ID")
+    },
     "bing": {
         "api_key": os.getenv("BING_API_KEY")
     },
