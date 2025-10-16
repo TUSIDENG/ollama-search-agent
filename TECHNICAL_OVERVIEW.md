@@ -86,7 +86,7 @@ The architecture follows modern software engineering principles with clear separ
   - **Dynamic Discovery**: Automatically discovers all classes inheriting from `BaseSearch`
   - **Dynamic Registration**: Register new engines via `register_engine()` method
   - **Configuration Validation**: Checks required API keys and configuration
-  - **Smart Default Selection**: Automatically selects best available engine
+  - **Smart Default Selection**: Automatically selects the best available engine, prioritizing `custom_google` and `google`.
   - **Error Handling**: Comprehensive error handling with clear messages
 - **Key Methods**:
   - `create(engine_name)`: Create search engine instance
@@ -286,6 +286,9 @@ register_search_engine(
 ## 8. Future Enhancements
 
 ### Potential Improvements
+- **Intelligent Agent Selection**: Automatically select the best agent based on user input and task complexity.
+- **Dynamic LLM Selection**: Allow the agent to dynamically choose the most suitable LLM (Ollama, OpenAI, etc.) based on the query or user preferences.
+- **Enhanced Search Engine Prioritization**: Further refine the logic for selecting search engines, potentially incorporating factors like query type, result quality, or user-defined preferences.
 - **Streaming Support**: Real-time response generation
 - **Caching**: Result caching for performance
 - **Multi-modal Search**: Image and document search capabilities

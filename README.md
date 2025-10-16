@@ -17,15 +17,14 @@ A modular Python-based search agent that leverages Large Language Models (LLMs) 
 - **Dynamic Engine Discovery**: Automatically discovers all search engines inheriting from `BaseSearch`
 - **Dynamic Registration**: Register new engines without modifying existing code
 - **Configuration Validation**: Automatically checks engine configuration status
-- **Smart Default Selection**: Automatically selects the best available search engine
 - **Error Handling**: Comprehensive error handling with clear messages
 
 ### Available Search Engines
 - **placeholder**: Mock search engine for development and testing
-- **google**: Google Custom Search API integration
+- **custom_google**: Prioritized Google Custom Search API integration (uses `GOOGLE_API_KEY` and `GOOGLE_CSE_ID`)
+- **google**: Google Custom Search API integration (fallback if `custom_google` is not available)
 - **bing**: Bing Search API integration
 - **brave**: Brave Search API integration
-- **custom_google**: Alternative Google search implementation
 
 ### Usage Examples
 ```bash
@@ -95,6 +94,8 @@ OPENAI_MODEL=gpt-4
 # Search Engine API Keys
 GOOGLE_API_KEY=your_google_api_key
 GOOGLE_CSE_ID=your_custom_search_engine_id
+CUSTOM_GOOGLE_API_KEY=your_custom_google_api_key # Note: Currently uses GOOGLE_API_KEY
+CUSTOM_GOOGLE_CSE_ID=your_custom_google_cse_id # Note: Currently uses GOOGLE_CSE_ID
 BING_API_KEY=your_bing_api_key
 BRAVE_API_KEY=your_brave_api_key
 ```
@@ -129,6 +130,9 @@ ollama-search-agent/
 ├── .gitignore               # Git ignore rules
 ├── README.md                # Project documentation
 ├── TECHNICAL_OVERVIEW.md    # Detailed technical documentation
+├── langchain_tools/         # LangChain tool implementations (e.g., SearchTool)
+│   ├── __init__.py
+│   └── search_tools.py      # LangChain wrapper for search engines
 ├── llm_clients/             # LLM provider implementations
 │   ├── __init__.py
 │   ├── ollama_client.py     # Ollama local model client
@@ -137,10 +141,10 @@ ollama-search-agent/
     ├── __init__.py
     ├── base_search.py       # Abstract base class for search engines
     ├── placeholder_search.py # Mock search for development
-    ├── google_search.py     # Google Custom Search API
     ├── bing_search.py       # Bing Search API
     ├── brave_search.py      # Brave Search API
-    └── custom_google_search.py # Alternative Google search
+    ├── custom_google_search.py # Prioritized Google Custom Search API implementation
+    └── google_search.py     # Standard Google Custom Search API implementation
 ```
 
 ## 🔧 Core Components
@@ -216,3 +220,9 @@ pip install -r requirements.txt
 ## 📄 License
 
 [Add your license here]
+
+## ✨ Future Enhancements
+
+- **Intelligent Agent Selection**: Automatically select the best agent based on user input and task complexity.
+- **Dynamic LLM Selection**: Allow the agent to dynamically choose the most suitable LLM (Ollama, OpenAI, etc.) based on the query or user preferences.
+- **Enhanced Search Engine Prioritization**: Further refine the logic for selecting search engines, potentially incorporating factors like query type, result quality, or user-defined preferences.
