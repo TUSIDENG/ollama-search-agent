@@ -1,6 +1,16 @@
-# Ollama Search Agent
+# Simple DeepSearch Agent Project
 
-A modular Python-based search agent that leverages Large Language Models (LLMs) to provide intelligent search capabilities. The agent uses LangChain for advanced tool usage and agent orchestration, supporting both local Ollama models and OpenAI-compatible APIs.
+## Project Goal
+
+This project aims to implement a simple DeepSearch agent, leveraging Large Language Models (LLMs) to automate and enhance research tasks. The agent will drive multi-step reasoning, large-scale online retrieval, cross-source evidence merging, and structured writing to produce research-grade results with citations.
+
+## Introduction to DeepSearch
+
+Deep Research (deep research/deep search) technology is an application system built around large language models (LLMs), aiming to automate and enhance research tasks. It drives large-scale online retrieval through multi-step reasoning, merges evidence across sources, and performs structured writing, producing research-grade results with citations.
+
+A Deep Research Agent is an AI agent driven by LLMs, integrating dynamic reasoning, adaptive planning, multi-iterative external data retrieval and tool use, and the ability to generate comprehensive analytical reports for information research tasks.
+
+For a more detailed technical deep dive, please refer to [deepsearch_summary_en.md](deepsearch_summary_en.md).
 
 ## 🚀 Features
 
