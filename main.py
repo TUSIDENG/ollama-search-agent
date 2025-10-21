@@ -9,7 +9,7 @@ from config import OPENAI_API_CONFIG
 
 def main():
     parser = argparse.ArgumentParser(description="Ollama Search Agent - LangChain Optimized")
-    parser.add_argument("--llm", type=str, default="ollama", help="LLM to use (ollama or openai)")
+    parser.add_argument("--llm", type=str, default="openai", help="LLM to use (ollama or openai)")
     parser.add_argument("--search-engine", type=str, default="auto", help="Search engine to use (auto, placeholder, brave, google, bing, custom_google). Use 'auto' for automatic selection.")
     parser.add_argument("--list-engines", action="store_true", help="List all available search engines and their status")
     parser.add_argument("query", type=str, nargs="?", default="", help="Search query")
@@ -50,7 +50,7 @@ def main():
         query = input("Please enter your search query: ")
 
     # Execute agent
-    result = agent.run(query)
+    result = agent.deep_search(query)
     
     print("\n--- Final Answer ---")
     print(result)
